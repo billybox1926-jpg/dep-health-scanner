@@ -46,7 +46,7 @@ class Cache:
             conn.commit()
 
     @classmethod
-    def default(cls) -> Cache:
+    def default(cls) -> "Cache":
         cache_dir = Path.home() / ".cache" / "dep-health-scanner"
         return cls(cache_dir / "cache.sqlite")
 
@@ -117,3 +117,7 @@ class Cache:
                 "n"
             ]
             return reg, vuln
+
+
+def cache() -> Cache:
+    return Cache.default()
