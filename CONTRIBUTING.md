@@ -22,8 +22,27 @@ Thanks for your interest in contributing.
 - [ ] Docs are updated (if behavior changed)
 - [ ] Changelog updated (if needed)
 
-## Local automation defaults
+## Local validation
 
-- Bootstrap: `bash scripts/bootstrap.sh`
-- Setup guide: `docs/developer-setup.md`
+```bash
+# Install in editable/dev mode
+pip install -e ".[dev]"
+
+# Run tests
+pytest tests/
+
+# Lint
+ruff check .
+
+# Format check
+ruff format --check .
+
+# Type check
+mypy src/
+```
+
+## Common commands
+
+- Bootstrap: `pip install -e .`
+- Setup guide: see README.md for install/usage
 - CI workflows: `.github/workflows/`

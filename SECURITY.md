@@ -4,9 +4,7 @@
 
 Please do **not** open public issues for security vulnerabilities.
 
-Instead, report privately to:
-
-- security@example.com
+Instead, report privately through [GitHub Security Advisories](https://github.com/billybox1926-jpg/dep-health-scanner/security/advisories/new).
 
 Include:
 
