@@ -28,6 +28,8 @@ class RegistryClient:
                 latest = self._fetch_npm_latest(dep.name)
             elif dep.ecosystem == Ecosystem.CARGO:
                 latest = self._fetch_cargo_latest(dep.name)
+            elif dep.ecosystem == Ecosystem.GO:
+                latest = self._fetch_go_latest(dep.name)
             else:
                 return None
             if latest:
@@ -50,6 +52,20 @@ class RegistryClient:
         if resp.status_code == 200:
             data = resp.json()
             return data.get("crate", {}).get("newest_version")
+        return None
+
+    def _fetch_go_latest(self, name: str) -> Optional[str]:
+        encoded = name.strip("/")
+        if not encoded.startswith("@"):
+            encoded = f"@{encoded}"
+        url = f"https://proxy.golang.org{encoded}/@latest"
+        resp = self._client.get(url)
+        if resp.status_code != 200:
+            return None
+        data = resp.json()
+        version = data.get("Version")
+        if version:
+            return version.lstrip("v")
         return None
 
 

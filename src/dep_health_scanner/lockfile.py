@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import List, Optional
 
@@ -15,6 +16,7 @@ class LockfileDetector:
         ("Cargo.lock", Ecosystem.CARGO),
         ("Pipfile.lock", Ecosystem.PIP),
         ("poetry.lock", Ecosystem.PIP),
+        ("go.mod", Ecosystem.GO),
     ]
 
     @classmethod
@@ -33,6 +35,8 @@ class LockfileDetector:
             deps = cls._parse_cargo(path)
         elif ecosystem == Ecosystem.PIP:
             deps = cls._parse_pip(path)
+        elif ecosystem == Ecosystem.GO:
+            deps = cls._parse_go_mod(path)
         else:
             raise ValueError(f"Unsupported ecosystem: {ecosystem}")
         return Lockfile(path=path, ecosystem=ecosystem, dependencies=deps)
@@ -114,4 +118,65 @@ class LockfileDetector:
                                 transitive=False,
                             )
                         )
+        return deps
+
+    @classmethod
+    def _parse_go_mod(cls, path: Path) -> List[Dependency]:
+        lines = path.read_text().splitlines()
+        deps: List[Dependency] = []
+        inside_block = False
+
+        for raw in lines:
+            stripped = raw.strip()
+
+            if inside_block:
+                if stripped.startswith(")"):
+                    inside_block = False
+                    continue
+                if not stripped or stripped.startswith("//"):
+                    continue
+                name, version, *_ = re.split(r"\s+", stripped)
+                is_indirect = "// indirect" in stripped
+                deps.append(
+                    Dependency(
+                        name=name,
+                        version=version.lstrip("v"),
+                        ecosystem=Ecosystem.GO,
+                        transitive=is_indirect,
+                    )
+                )
+                continue
+
+            if not stripped.startswith("require"):
+                continue
+
+            block = stripped[len("require") :].strip()
+            if block.startswith("("):
+                inside_block = True
+                # drop the opening paren on the same line
+                after_paren = block[1:].strip()
+                if after_paren and not after_paren.startswith("//"):
+                    name, version, *_ = re.split(r"\s+", after_paren)
+                    is_indirect = "// indirect" in after_paren
+                    deps.append(
+                        Dependency(
+                            name=name,
+                            version=version.lstrip("v"),
+                            ecosystem=Ecosystem.GO,
+                            transitive=is_indirect,
+                        )
+                    )
+                continue
+
+            name, version, *_ = re.split(r"\s+", block)
+            is_indirect = "// indirect" in block
+            deps.append(
+                Dependency(
+                    name=name,
+                    version=version.lstrip("v"),
+                    ecosystem=Ecosystem.GO,
+                    transitive=is_indirect,
+                )
+            )
+
         return deps

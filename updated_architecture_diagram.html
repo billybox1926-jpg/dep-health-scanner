@@ -112,7 +112,7 @@
       </div>
       <div class="node secondary">
         <h3>lockfile.py — LockfileDetector</h3>
-        <p>Auto-detects lockfiles (package-lock.json, Cargo.lock, Pipfile.lock) in target path.</p>
+        <p>Auto-detects lockfiles (package-lock.json, Cargo.lock, Pipfile.lock, go.mod) in target path.</p>
       </div>
     </div>
 
@@ -121,7 +121,7 @@
     <div class="row">
       <div class="node secondary">
         <h3>models.py — Data model</h3>
-        <p>Dependency, Ecosystem (npm/cargo/pip), Vulnerability, ScanResult.</p>
+        <p>Dependency, Ecosystem (npm/cargo/pip/go), Vulnerability, ScanResult.</p>
       </div>
       <div class="node secondary">
         <h3>scanner.py — Scanner</h3>
@@ -134,7 +134,7 @@
     <div class="row">
       <div class="node tertiary">
         <h3>RegistryClient</h3>
-        <p>Fetches latest package versions from npm / crates.io. Reads/writes Cache.</p>
+        <p>Fetches latest package versions from npm / crates.io / Go module proxy. Reads/writes Cache.</p>
       </div>
       <div class="node tertiary">
         <h3>VulnerabilityClient</h3>

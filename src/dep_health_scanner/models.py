@@ -10,6 +10,7 @@ class Ecosystem(str, Enum):
     NPM = "npm"
     CARGO = "cargo"
     PIP = "pip"
+    GO = "go"
     UNKNOWN = "unknown"
 
 

@@ -1,5 +1,4 @@
-import pytest
-from dep_health_scanner import __version__, Ecosystem, Cache
+from dep_health_scanner import __version__, Ecosystem
 
 
 def test_imports():
@@ -12,4 +11,5 @@ def test_ecosystem_enum():
     assert Ecosystem.NPM == "npm"
     assert Ecosystem.CARGO == "cargo"
     assert Ecosystem.PIP == "pip"
+    assert Ecosystem.GO == "go"
     assert Ecosystem.UNKNOWN == "unknown"

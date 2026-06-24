@@ -34,13 +34,14 @@ depscan scan --exit-code
 - `pnpm-lock.yaml` (npm)
 - `Cargo.lock` (cargo)
 - `Pipfile.lock` / `poetry.lock` (pip)
+- `go.mod` (Go)
 
 ## Architecture
 
 The Python implementation mirrors the Rust design from the proposal:
 
 - **LockfileDetector** — auto-detects lockfile type
-- **RegistryClient** — queries npm / cargo registries with SQLite caching
+- **RegistryClient** — queries npm / cargo / Go registries with SQLite caching
 - **VulnerabilityClient** — queries OSV API with local cache
 - **Scanner** — parallel scan using `ThreadPoolExecutor`
 - **Reporter** — rich terminal output grouped by severity
