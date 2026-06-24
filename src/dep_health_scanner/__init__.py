@@ -9,7 +9,6 @@ __all__ = [
     "Ecosystem",
     "ScanResult",
     "Vulnerability",
-    "Alternative",
     "Cache",
     "LockfileDetector",
     "Scanner",

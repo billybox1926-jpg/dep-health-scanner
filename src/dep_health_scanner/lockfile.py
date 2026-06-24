@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from .models import Dependency, Ecosystem, Lockfile
 
 
 class LockfileDetector:
-    PATTERNS: List[Tuple[str, Ecosystem]] = [
+    PATTERNS: List[tuple[str, Ecosystem]] = [
         ("package-lock.json", Ecosystem.NPM),
         ("yarn.lock", Ecosystem.NPM),
         ("pnpm-lock.yaml", Ecosystem.NPM),
@@ -24,18 +24,6 @@ class LockfileDetector:
             if path.exists():
                 return cls._parse(path, eco)
         return None
-
-    @classmethod
-    def detect_all(cls, root: Path) -> List[Lockfile]:
-        results: List[Lockfile] = []
-        for filename, eco in cls.PATTERNS:
-            for path in root.glob(f"**/{filename}"):
-                try:
-                    lf = cls._parse(path, eco)
-                    results.append(lf)
-                except Exception:
-                    continue
-        return results
 
     @classmethod
     def _parse(cls, path: Path, ecosystem: Ecosystem) -> Lockfile:
