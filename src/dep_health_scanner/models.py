@@ -10,7 +10,6 @@ class Ecosystem(str, Enum):
     NPM = "npm"
     CARGO = "cargo"
     PIP = "pip"
-    GO = "go"
     UNKNOWN = "unknown"
 
 
@@ -41,21 +40,9 @@ class Vulnerability:
 
 
 @dataclass
-class Alternative:
-    name: str
-    version: str
-    stars: int = 0
-    weekly_downloads: int = 0
-    size_kb: Optional[int] = None
-    score: float = 0.0
-
-
-@dataclass
 class ScanResult:
     dependency: Dependency
     latest_version: Optional[str] = None
     outdated: bool = False
     vulnerabilities: List[Vulnerability] = field(default_factory=list)
     license: Optional[str] = None
-    bus_factor_score: Optional[int] = None
-    alternatives: List[Alternative] = field(default_factory=list)
