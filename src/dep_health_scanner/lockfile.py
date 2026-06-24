@@ -50,7 +50,11 @@ class LockfileDetector:
                 version = info.get("version")
                 if not version:
                     continue
-                name = key.split("/")[0] if not key.startswith("node_modules/") else key.replace("node_modules/", "")
+                name = (
+                    key.split("/")[0]
+                    if not key.startswith("node_modules/")
+                    else key.replace("node_modules/", "")
+                )
                 deps.append(
                     Dependency(
                         name=name,
@@ -84,11 +88,14 @@ class LockfileDetector:
         # Pipfile.lock is JSON; poetry.lock is TOML. Handle both.
         if path.suffix == ".toml":
             import tomllib
+
             with path.open("rb") as f:
                 data = tomllib.load(f)
             packages = data.get("package", [])
             deps = [
-                Dependency(name=p["name"], version=p["version"], ecosystem=Ecosystem.PIP)
+                Dependency(
+                    name=p["name"], version=p["version"], ecosystem=Ecosystem.PIP
+                )
                 for p in packages
             ]
             return deps

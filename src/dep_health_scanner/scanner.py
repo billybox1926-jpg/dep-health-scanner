@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
 from typing import List, Optional
 
 import httpx

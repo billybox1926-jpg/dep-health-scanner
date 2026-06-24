@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -46,7 +46,9 @@ class Cache:
         cache_dir = Path.home() / ".cache" / "dep-health-scanner"
         return cls(cache_dir / "cache.sqlite")
 
-    def get_latest_version(self, ecosystem: str, package: str) -> Optional[Tuple[str, datetime]]:
+    def get_latest_version(
+        self, ecosystem: str, package: str
+    ) -> Optional[Tuple[str, datetime]]:
         # SQLite connections must be per-thread when using check_same_thread=False
         conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
         conn.row_factory = sqlite3.Row
@@ -57,7 +59,9 @@ class Cache:
             )
             row = cur.fetchone()
             if row:
-                return row["latest_version"], datetime.fromisoformat(row["last_updated"])
+                return row["latest_version"], datetime.fromisoformat(
+                    row["last_updated"]
+                )
             return None
         finally:
             conn.close()
@@ -119,8 +123,12 @@ class Cache:
         conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
         conn.row_factory = sqlite3.Row
         try:
-            reg = conn.execute("SELECT COUNT(*) as n FROM registry_versions").fetchone()["n"]
-            vuln = conn.execute("SELECT COUNT(*) as n FROM vulnerabilities").fetchone()["n"]
+            reg = conn.execute(
+                "SELECT COUNT(*) as n FROM registry_versions"
+            ).fetchone()["n"]
+            vuln = conn.execute("SELECT COUNT(*) as n FROM vulnerabilities").fetchone()[
+                "n"
+            ]
             return reg, vuln
         finally:
             conn.close()

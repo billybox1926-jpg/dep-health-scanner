@@ -1,4 +1,4 @@
-from .models import *
+from .models import Dependency, Ecosystem, ScanResult, Vulnerability
 from .cache import Cache
 from .lockfile import LockfileDetector
 from .scanner import Scanner, RegistryClient, VulnerabilityClient
