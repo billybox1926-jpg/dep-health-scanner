@@ -13,46 +13,21 @@ on:
         required: false
         default: true
         type: boolean
-      setup-node:
-        description: Enable Node.js setup.
-        required: false
-        default: true
-        type: boolean
-      node-version:
-        description: Node.js version for JS/TS projects.
-        required: false
-        default: '20'
-        type: string
       run-format-check:
         description: Run formatting validation command.
         required: false
         default: true
         type: boolean
-      format-command:
-        description: Command used for format validation.
-        required: false
-        default: npm run format:check --if-present
-        type: string
       run-lint:
         description: Run lint command.
         required: false
         default: true
         type: boolean
-      lint-command:
-        description: Command used for lint validation.
-        required: false
-        default: npm run lint --if-present
-        type: string
       run-test:
         description: Run automated tests.
         required: false
         default: true
         type: boolean
-      test-command:
-        description: Command used to run test suite.
-        required: false
-        default: npm test --if-present
-        type: string
 
 jobs:
   quality:
@@ -70,25 +45,28 @@ jobs:
         shell: bash
         run: bash scripts/hygiene.sh
 
-      - name: Set up Node.js
-        if: ${{ inputs.setup-node }}
-        uses: actions/setup-node@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          node-version: ${{ inputs.node-version }}
-          cache: npm
+          python-version: '3.11'
 
       - name: Install dependencies
-        if: ${{ inputs.setup-node }}
-        run: npm ci
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
 
       - name: Format check
         if: ${{ inputs.run-format-check }}
-        run: ${{ inputs.format-command }}
+        shell: bash
+        run: ruff format --check src/
 
       - name: Lint
         if: ${{ inputs.run-lint }}
-        run: ${{ inputs.lint-command }}
+        shell: bash
+        run: ruff check src/
 
       - name: Test
         if: ${{ inputs.run-test }}
-        run: ${{ inputs.test-command }}
+        shell: bash
+        run: pytest -v

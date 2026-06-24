@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>dep-health-scanner — Architecture Diagram</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0e1116;
+      color: #e6e8eb;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin: 0 0 0.25rem 0;
+    }
+    .subtitle {
+      color: #8b949e;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 1100px;
+    }
+    .row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .node {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 0.75rem 0.9rem;
+      min-width: 180px;
+      flex: 1 1 0;
+    }
+    .node.primary {
+      background: #0d3b4c;
+      border-color: #1f6feb;
+    }
+    .node.secondary {
+      background: #142214;
+      border-color: #238636;
+    }
+    .node.tertiary {
+      background: #241e0e;
+      border-color: #9e6a03;
+    }
+    .node h3 {
+      margin: 0 0 0.25rem 0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f0f6fc;
+    }
+    .node p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: #8b949e;
+      line-height: 1.35;
+    }
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8b949e;
+      font-size: 0.85rem;
+    }
+    .legend {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: #8b949e;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+  <h1>dep-health-scanner — Architecture</h1>
+  <div class="subtitle">Python implementation (current shipped state)</div>
+
+  <div class="diagram">
+    <div class="row">
+      <div class="node primary">
+        <h3>Entry: depscan.py</h3>
+        <p>CLI entry script. Adds src/ to sys.path, imports Typer app, and launches CLI.</p>
+      </div>
+    </div>
+
+    <div class="arrow">▾</div>
+
+    <div class="row">
+      <div class="node primary">
+        <h3>cli.py — Typer App</h3>
+        <p>Command router. Subcommands: scan, stats. Parses flags and invokes scanner pipeline.</p>
+      </div>
+      <div class="node secondary">
+        <h3>lockfile.py — LockfileDetector</h3>
+        <p>Auto-detects lockfiles (package-lock.json, Cargo.lock, Pipfile.lock) in target path.</p>
+      </div>
+    </div>
+
+    <div class="arrow">▾</div>
+
+    <div class="row">
+      <div class="node secondary">
+        <h3>models.py — Data model</h3>
+        <p>Dependency, Ecosystem (npm/cargo/pip), Vulnerability, ScanResult.</p>
+      </div>
+      <div class="node secondary">
+        <h3>scanner.py — Scanner</h3>
+        <p>Parallel scan using ThreadPoolExecutor. Coordinates RegistryClient + VulnerabilityClient.</p>
+      </div>
+    </div>
+
+    <div class="arrow">▾</div>
+
+    <div class="row">
+      <div class="node tertiary">
+        <h3>RegistryClient</h3>
+        <p>Fetches latest package versions from npm / crates.io. Reads/writes Cache.</p>
+      </div>
+      <div class="node tertiary">
+        <h3>VulnerabilityClient</h3>
+        <p>Queries OSV API for known vulns. Reads/writes Cache.</p>
+      </div>
+      <div class="node tertiary">
+        <h3>reporter.py — Reporter</h3>
+        <p>Rich terminal output: summary tables, severity colors, optional --format json / text.</p>
+      </div>
+    </div>
+
+    <div class="arrow">▾</div>
+
+    <div class="row">
+      <div class="node primary">
+        <h3>cache.py — SQLite Cache</h3>
+        <p>Persistent local cache at ~/.cache/dep-health-scanner/cache.sqlite. Stores:
+          registry_versions + vulnerabilities tables.
+          Thread-safe via per-connection (check_same_thread=False) + context-managed queries.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="dot" style="background:#1f6feb;"></span> CLI / coordination</div>
+    <div class="legend-item"><span class="dot" style="background:#238636;"></span> Core domain</div>
+    <div class="legend-item"><span class="dot" style="background:#9e6a03;"></span> External IO / presentation</div>
+  </div>
+</body>
+</html>
