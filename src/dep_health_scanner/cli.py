@@ -22,7 +22,6 @@ app = typer.Typer(
 @app.command()
 def scan(
     path: Optional[Path] = typer.Argument(None, exists=True, file_okay=False, dir_okay=True),
-    bus_factor: bool = typer.Option(False, "--bus-factor", help="Check bus factor"),
     suggest: bool = typer.Option(False, "--suggest", help="Suggest alternatives"),
     fail_on_critical: bool = typer.Option(False, "--exit-code", help="Fail on critical issues"),
     min_severity: str = typer.Option("low", "--min-severity", help="Minimum severity"),
@@ -44,14 +43,6 @@ def scan(
         raise typer.Exit(exit_code)
     finally:
         scanner.close()
-
-
-@app.command()
-def update():
-    rprint("[cyan]Updating caches...[/cyan]")
-    cache = Cache.default()
-    # TODO: refresh OSV and registry data
-    rprint("[green]Done![/green]")
 
 
 @app.command()
