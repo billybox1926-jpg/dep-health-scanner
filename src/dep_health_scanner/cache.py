@@ -110,9 +110,9 @@ class Cache:
 
     def stats(self) -> Tuple[int, int]:
         with self._connect() as conn:
-            reg = conn.execute("SELECT COUNT(*) as n FROM registry_versions").fetchone()[
-                "n"
-            ]
+            reg = conn.execute(
+                "SELECT COUNT(*) as n FROM registry_versions"
+            ).fetchone()["n"]
             vuln = conn.execute("SELECT COUNT(*) as n FROM vulnerabilities").fetchone()[
                 "n"
             ]
