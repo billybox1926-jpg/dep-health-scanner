@@ -14,6 +14,6 @@ jobs:
     uses: ./.github/workflows/reusable-quality.yml
     with:
       setup-node: false
-      run-format-check: false
-      run-lint: false
-      run-test: false
+      run-format-check: true
+      run-lint: true
+      run-test: true
