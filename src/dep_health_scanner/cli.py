@@ -22,7 +22,6 @@ app = typer.Typer(
 @app.command()
 def scan(
     path: Optional[Path] = typer.Argument(None, exists=True, file_okay=False, dir_okay=True),
-    suggest: bool = typer.Option(False, "--suggest", help="Suggest alternatives"),
     fail_on_critical: bool = typer.Option(False, "--exit-code", help="Fail on critical issues"),
     min_severity: str = typer.Option("low", "--min-severity", help="Minimum severity"),
     format: str = typer.Option("text", "--format", help="Output format (text, json)"),
@@ -51,14 +50,6 @@ def stats():
     reg, vuln = cache.stats()
     rprint(f"Registry entries: {reg}")
     rprint(f"Vulnerability records: {vuln}")
-
-
-@app.command()
-def suggest(
-    package: str,
-    ecosystem: str = typer.Option("npm", "--ecosystem", "-e"),
-):
-    rprint(f"[yellow]Suggestions for {package} ({ecosystem}) not yet implemented.[/yellow]")
 
 
 def main():
