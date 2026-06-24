@@ -8,7 +8,6 @@ from rich import print as rprint
 
 from .cache import Cache
 from .lockfile import LockfileDetector
-from .models import Ecosystem
 from .reporter import Reporter
 from .scanner import Scanner
 
@@ -50,6 +49,9 @@ def stats():
     reg, vuln = cache.stats()
     rprint(f"Registry entries: {reg}")
     rprint(f"Vulnerability records: {vuln}")
+
+
+
 
 
 def main():
