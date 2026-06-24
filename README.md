@@ -1,109 +1,46 @@
-# OSS Repository Template
+# dep-health-scanner
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Security Policy](https://img.shields.io/badge/security-policy-blue.svg)](SECURITY.md)
+Fast, opinionated CLI for dependency health and supply chain scanning.
+Scans lockfiles for outdated/vulnerable dependencies, licenses, and maintainer health.
 
-A reusable, professional baseline for open source repositories.
+## Install
 
-Use this template when you want clean OSS defaults, modular architecture conventions, reusable DevEx, and lightweight automation without locking a new project to one language or framework.
-
-## What is included
-
-- Repository health files: `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md`
-- GitHub collaboration scaffolding: issue templates, pull request template, and `CODEOWNERS`
-- Modular project structure: `core/`, `providers/`, `plugins/`, `config/`, `scripts/`, and `tests/`
-- Reusable documentation for standards, architecture, DevEx, setup, and repository settings
-- Baseline repository config: `.editorconfig`, `.gitattributes`, and `.gitignore`
-- Generic CI, release, bootstrap, validation, and hygiene automation
-
-## Quick start
-
-1. Click **Use this template** on GitHub.
-2. Rename the repository and update project-specific fields.
-3. Review the documentation map below.
-4. Confirm or replace `LICENSE` for your legal requirements.
-5. Update contacts in `SECURITY.md`, `CODEOWNERS`, and template placeholders.
-6. Copy `config/.env.example` if runtime configuration is needed.
-7. Review `docs/REPOSITORY_SETUP.md`, then enable branch protection and required status checks.
-
-## Documentation map
-
-| Need | Start here |
-| --- | --- |
-| Local setup and CI customization | `docs/developer-setup.md` |
-| Developer workflow, validation, debugging, and coding standards | `docs/DEVEX.md` |
-| Modular architecture conventions | `docs/ARCHITECTURE.md` |
-| Concrete `core -> providers -> plugins` walkthrough | `docs/examples/MODULAR_REFERENCE.md` |
-| Branch, commit, label, milestone, and release standards | `docs/REPOSITORY_STANDARDS.md` |
-| GitHub repository settings, branch protection, and merge/release setup | `docs/REPOSITORY_SETUP.md` |
-| Contribution expectations | `CONTRIBUTING.md` |
-| Security reporting | `SECURITY.md` |
-
-## Repository layout
-
-```text
-.github/
-  ISSUE_TEMPLATE/
-  workflows/
-  PULL_REQUEST_TEMPLATE.md
-  CODEOWNERS
-core/
-providers/
-plugins/
-config/
-  .env.example
-docs/
-  ARCHITECTURE.md
-  DEVEX.md
-  REPOSITORY_SETUP.md
-  REPOSITORY_STANDARDS.md
-  developer-setup.md
-  examples/
-    MODULAR_REFERENCE.md
-scripts/
-  bootstrap.sh
-  hygiene.sh
-  validate.sh
-tests/
-CHANGELOG.md
-CODE_OF_CONDUCT.md
-CONTRIBUTING.md
-LICENSE
-SECURITY.md
+```bash
+pip install -e .
 ```
 
-## Automation
+## Usage
 
-- `.github/workflows/ci.yml` runs the reusable quality workflow.
-- `.github/workflows/reusable-quality.yml` provides configurable hygiene, format, lint, and test checks.
-- `.github/workflows/release.yml` provides release automation scaffolding.
-- `bash scripts/bootstrap.sh` supports local setup.
-- `bash scripts/hygiene.sh` runs stack-agnostic repository checks.
-- `bash scripts/validate.sh` runs hygiene first, then project-specific checks when configured.
+```bash
+# Scan current directory
+depscan scan
 
-## Repository settings
+# Scan specific path
+depscan scan /path/to/project
 
-Recommended GitHub settings are documented in `docs/REPOSITORY_SETUP.md`.
+# Check bus factor and suggest alternatives
+depscan scan --bus-factor --suggest
 
-At minimum, review:
+# Fail CI build on critical issues
+depscan scan --exit-code
+```
 
-- default branch protection
-- required status checks
-- allowed merge methods
-- release workflow expectations
+## Supported lockfiles
 
-## Versioning and releases
+- `package-lock.json` (npm)
+- `yarn.lock` (npm)
+- `pnpm-lock.yaml` (npm)
+- `Cargo.lock` (cargo)
+- `Pipfile.lock` / `poetry.lock` (pip)
 
-Use [Semantic Versioning](https://semver.org/) and keep a human-readable `CHANGELOG.md`.
+## Architecture
 
-- **MAJOR**: incompatible API or behavior changes.
-- **MINOR**: backward-compatible functionality.
-- **PATCH**: backward-compatible fixes.
+The Python implementation mirrors the Rust design from the proposal:
 
-## Suggested next steps
+- **LockfileDetector** — auto-detects lockfile type
+- **RegistryClient** — queries npm / cargo registries with SQLite caching
+- **VulnerabilityClient** — queries OSV API with local cache
+- **Scanner** — parallel scan using `ThreadPoolExecutor`
+- **Reporter** — rich terminal output grouped by severity
 
-- Enable or customize the workflow commands for your stack.
-- Fill the modular folders with project-specific implementation code.
-- Add project-specific architecture and operations notes under `docs/`.
-- Configure release automation if you publish artifacts.
+Exit code 1 when `--exit-code` is passed and critical vulnerabilities are found.

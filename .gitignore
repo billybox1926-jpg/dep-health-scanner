@@ -20,6 +20,7 @@ logs/
 # Dependency directories
 node_modules/
 .vendor/
+target/
 
 # Build and distribution artifacts
 dist/
@@ -34,6 +35,8 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+*.egg-info/
+.eggs/
 
 # Java
 *.class
@@ -41,11 +44,19 @@ venv/
 # Go
 bin/
 
-# Rust
+# Scanner cache / local data
+.cache/
+.cache/**
+*.sqlite
+*.db
+
+# Rust artifacts (if building Rust version)
 target/
 
-# Package manager lockfiles for library templates (optional)
-# Uncomment as needed for application repos:
+# Ignore lockfiles committed for reproducible scans
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+# Cargo.lock
+# Pipfile.lock
+# poetry.lock

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dep-health-scanner"
+version = "0.1.0"
+description = "Fast, opinionated CLI for dependency health and supply chain scanning"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "typer>=0.9",
+    "rich>=13.0",
+    "httpx>=0.27",
+    "packaging>=23.0",
+]
+
+[project.scripts]
+depscan = "dep_health_scanner.cli:app"
