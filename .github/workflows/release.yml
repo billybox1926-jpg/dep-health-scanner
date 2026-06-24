@@ -6,17 +6,17 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   release-please:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Release Please
         uses: googleapis/release-please-action@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           release-type: simple
+          package-name: dep-health-scanner
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Maintenance","hidden":false}]'
