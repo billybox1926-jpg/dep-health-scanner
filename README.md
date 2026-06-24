@@ -25,6 +25,12 @@ depscan scan /path/to/project
 
 # Fail CI build on critical issues
 depscan scan --exit-code
+
+# Warm the local cache without running a full scan
+depscan update
+
+# Limit cache update to one ecosystem
+depscan update /path/to/project --ecosystem go
 ```
 
 ## Supported lockfiles
