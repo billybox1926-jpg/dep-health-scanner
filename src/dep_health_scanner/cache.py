@@ -117,6 +117,7 @@ class Cache:
 
     def stats(self) -> Tuple[int, int]:
         conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
+        conn.row_factory = sqlite3.Row
         try:
             reg = conn.execute("SELECT COUNT(*) as n FROM registry_versions").fetchone()["n"]
             vuln = conn.execute("SELECT COUNT(*) as n FROM vulnerabilities").fetchone()["n"]
