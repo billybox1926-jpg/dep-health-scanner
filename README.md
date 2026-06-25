@@ -1,3 +1,5 @@
+# dep-health-scanner
+
 <div align="center">
 
 [![CI](https://github.com/billybox1926-jpg/dep-health-scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/billybox1926-jpg/dep-health-scanner/actions/workflows/ci.yml)
@@ -9,8 +11,6 @@
 **Tags:** `cli` · `dependency-management` · `supply-chain` · `security` · `vulnerability-scanner` · `lockfile` · `python` · `rust` · `osv` · `npm` · `cargo` · `go`
 
 </div>
-
-# dep-health-scanner
 
 ![Icon](icon.svg)
 
