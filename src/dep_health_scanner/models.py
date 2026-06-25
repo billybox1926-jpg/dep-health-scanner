@@ -45,4 +45,3 @@ class ScanResult:
     latest_version: Optional[str] = None
     outdated: bool = False
     vulnerabilities: List[Vulnerability] = field(default_factory=list)
-    license: Optional[str] = None
