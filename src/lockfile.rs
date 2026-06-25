@@ -178,22 +178,24 @@ impl LockfileDetector {
         let lock: PipfileLock = serde_json::from_str(content)?;
         let mut deps = Vec::new();
 
-        let add_section = |section: Option<&std::collections::HashMap<String, serde_json::Value>>, deps: &mut Vec<Dependency>| {
-            if let Some(map) = section {
-                for (name, info) in map {
-                    if let Some(version) = info.get("version").and_then(|v| v.as_str()) {
-                        deps.push(Dependency {
-                            name: name.clone(),
-                            version: version.to_string(),
-                            ecosystem: Ecosystem::Pip,
-                            source: None,
-                            transitive: false,
-                            dependencies: Vec::new(),
-                        });
+        let add_section =
+            |section: Option<&std::collections::HashMap<String, serde_json::Value>>,
+             deps: &mut Vec<Dependency>| {
+                if let Some(map) = section {
+                    for (name, info) in map {
+                        if let Some(version) = info.get("version").and_then(|v| v.as_str()) {
+                            deps.push(Dependency {
+                                name: name.clone(),
+                                version: version.to_string(),
+                                ecosystem: Ecosystem::Pip,
+                                source: None,
+                                transitive: false,
+                                dependencies: Vec::new(),
+                            });
+                        }
                     }
                 }
-            }
-        };
+            };
 
         add_section(lock.default.as_ref(), &mut deps);
         add_section(lock.develop.as_ref(), &mut deps);

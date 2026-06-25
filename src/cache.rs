@@ -14,8 +14,9 @@ impl Cache {
         std::fs::create_dir_all(&cache_dir)?;
         let db_path = cache_dir.join("cache.db");
         let conn = Connection::open(&db_path)?;
-        
-        conn.execute_batch("
+
+        conn.execute_batch(
+            "
             CREATE TABLE IF NOT EXISTS registry_versions (
                 package TEXT PRIMARY KEY,
                 ecosystem TEXT NOT NULL,
@@ -41,7 +42,8 @@ impl Cache {
             );
             CREATE INDEX IF NOT EXISTS idx_vuln_ecosystem ON vulnerabilities(ecosystem);
             CREATE INDEX IF NOT EXISTS idx_vuln_package ON vulnerabilities(package);
-        ")?;
+        ",
+        )?;
 
         Ok(Self {
             conn: Arc::new(Mutex::new(conn)),
@@ -56,7 +58,11 @@ impl Cache {
         Self::new(cache_dir)
     }
 
-    pub fn get_latest_version(&self, ecosystem: &str, package: &str) -> Result<Option<(String, DateTime<Utc>)>> {
+    pub fn get_latest_version(
+        &self,
+        ecosystem: &str,
+        package: &str,
+    ) -> Result<Option<(String, DateTime<Utc>)>> {
         let conn = self.conn.lock().unwrap();
         let mut stmt = conn.prepare_cached(
             "SELECT latest_version, last_updated FROM registry_versions WHERE package = ?1 AND ecosystem = ?2"
@@ -64,7 +70,7 @@ impl Cache {
         let result = stmt.query_row(params![package, ecosystem], |row| {
             Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
         });
-        
+
         match result {
             Ok((version, ts)) => {
                 let dt = DateTime::parse_from_rfc3339(&ts)?.with_timezone(&Utc);
@@ -84,7 +90,11 @@ impl Cache {
         Ok(())
     }
 
-    pub fn get_vulnerabilities(&self, ecosystem: &str, package: &str) -> Result<Vec<VulnerabilityRecord>> {
+    pub fn get_vulnerabilities(
+        &self,
+        ecosystem: &str,
+        package: &str,
+    ) -> Result<Vec<VulnerabilityRecord>> {
         let conn = self.conn.lock().unwrap();
         let mut stmt = conn.prepare_cached(
             "SELECT id, affected, summary, severity, cve, fixed_versions FROM vulnerabilities WHERE ecosystem = ?1 AND package = ?2"
@@ -127,14 +137,20 @@ impl Cache {
 
     pub fn update_all(&self) -> Result<()> {
         // Placeholder: in a real implementation, fetch OSV feeds and registry mirrors
-        println!("{}", "Cache update would fetch OSV database and registry data here.".yellow());
+        println!(
+            "{}",
+            "Cache update would fetch OSV database and registry data here.".yellow()
+        );
         Ok(())
     }
 
     pub fn print_stats(&self) -> Result<()> {
         let conn = self.conn.lock().unwrap();
-        let count: i64 = conn.query_row("SELECT COUNT(*) FROM registry_versions", [], |row| row.get(0))?;
-        let vuln_count: i64 = conn.query_row("SELECT COUNT(*) FROM vulnerabilities", [], |row| row.get(0))?;
+        let count: i64 = conn.query_row("SELECT COUNT(*) FROM registry_versions", [], |row| {
+            row.get(0)
+        })?;
+        let vuln_count: i64 =
+            conn.query_row("SELECT COUNT(*) FROM vulnerabilities", [], |row| row.get(0))?;
         println!("Cache statistics:");
         println!("  Registry entries: {}", count);
         println!("  Vulnerability records: {}", vuln_count);

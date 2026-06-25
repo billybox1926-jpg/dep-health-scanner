@@ -87,9 +87,10 @@ impl Scanner {
 
     fn scan_dependency(&self, dep: Dependency) -> ScanResult {
         let ecosystem_str = dep.ecosystem.to_string();
-        
+
         // Check cache first
-        let latest_version = self.cache
+        let latest_version = self
+            .cache
             .get_latest_version(&ecosystem_str, &dep.name)
             .ok()
             .flatten();
@@ -103,7 +104,8 @@ impl Scanner {
         };
 
         // Check vulnerabilities
-        let vulnerabilities = self.cache
+        let vulnerabilities = self
+            .cache
             .get_vulnerabilities(&ecosystem_str, &dep.name)
             .ok()
             .unwrap_or_default();

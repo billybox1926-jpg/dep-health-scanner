@@ -33,9 +33,18 @@ impl Reporter {
         let mut critical_found = false;
 
         // Summary header
-        println!("\n{}", "═══════════════════════════════════════".cyan().bold());
-        println!("{}", "       DEPENDENCY HEALTH REPORT        ".cyan().bold());
-        println!("{}", "═══════════════════════════════════════".cyan().bold());
+        println!(
+            "\n{}",
+            "═══════════════════════════════════════".cyan().bold()
+        );
+        println!(
+            "{}",
+            "       DEPENDENCY HEALTH REPORT        ".cyan().bold()
+        );
+        println!(
+            "{}",
+            "═══════════════════════════════════════".cyan().bold()
+        );
         println!();
 
         // Group results by severity
@@ -238,7 +247,9 @@ impl Reporter {
             }
             println!(
                 "         {}",
-                "run `depscan suggest <package>` for details".italic().dimmed()
+                "run `depscan suggest <package>` for details"
+                    .italic()
+                    .dimmed()
             );
         }
 

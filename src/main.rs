@@ -2,10 +2,7 @@ use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use colored::Colorize;
 use dep_health_scanner::{
-    cache::Cache,
-    dependency::Ecosystem,
-    lockfile::LockfileDetector,
-    reporter::Reporter,
+    cache::Cache, dependency::Ecosystem, lockfile::LockfileDetector, reporter::Reporter,
     scanner::Scanner,
 };
 use std::path::PathBuf;

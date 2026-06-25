@@ -45,28 +45,50 @@ jobs:
         shell: bash
         run: bash scripts/hygiene.sh
 
+      # --- Rust toolchain ---
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Rust format check
+        if: ${{ inputs.run-format-check }}
+        shell: bash
+        run: cargo fmt -- --check
+
+      - name: Rust lint
+        if: ${{ inputs.run-lint }}
+        shell: bash
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Rust test
+        if: ${{ inputs.run-test }}
+        shell: bash
+        run: cargo test --all-targets
+
+      # --- Python toolchain ---
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         shell: bash
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Format check
+      - name: Python format check
         if: ${{ inputs.run-format-check }}
         shell: bash
         run: ruff format --check src/
 
-      - name: Lint
+      - name: Python lint
         if: ${{ inputs.run-lint }}
         shell: bash
         run: ruff check src/
 
-      - name: Test
+      - name: Python test
         if: ${{ inputs.run-test }}
         shell: bash
         run: pytest -v
