@@ -21,7 +21,6 @@ class Dependency:
     ecosystem: Ecosystem = Ecosystem.UNKNOWN
     source: Optional[str] = None
     transitive: bool = False
-    dependencies: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -46,4 +45,3 @@ class ScanResult:
     latest_version: Optional[str] = None
     outdated: bool = False
     vulnerabilities: List[Vulnerability] = field(default_factory=list)
-    license: Optional[str] = None
