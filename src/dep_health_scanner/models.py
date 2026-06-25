@@ -21,7 +21,6 @@ class Dependency:
     ecosystem: Ecosystem = Ecosystem.UNKNOWN
     source: Optional[str] = None
     transitive: bool = False
-    dependencies: List[str] = field(default_factory=list)
 
 
 @dataclass
