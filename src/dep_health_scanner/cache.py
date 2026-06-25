@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import sqlite3
 import json
+import sqlite3
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -53,7 +53,8 @@ class Cache:
     def get_latest_version(self, ecosystem: str, package: str) -> Optional[Tuple[str, datetime]]:
         with self._connect() as conn:
             cur = conn.execute(
-                "SELECT latest_version, last_updated FROM registry_versions WHERE package=? AND ecosystem=?",
+                "SELECT latest_version, last_updated FROM registry_versions "
+                "WHERE package=? AND ecosystem=?",
                 (package, ecosystem),
             )
             row = cur.fetchone()
@@ -64,7 +65,10 @@ class Cache:
     def set_latest_version(self, ecosystem: str, package: str, version: str):
         with self._connect() as conn:
             conn.execute(
-                "INSERT OR REPLACE INTO registry_versions (package, ecosystem, latest_version, last_updated) VALUES (?, ?, ?, ?)",
+                (
+                    "INSERT OR REPLACE INTO registry_versions "
+                    "(package, ecosystem, latest_version, last_updated) VALUES (?, ?, ?, ?)"
+                ),
                 (package, ecosystem, version, datetime.utcnow().isoformat()),
             )
             conn.commit()

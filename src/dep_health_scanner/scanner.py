@@ -6,8 +6,8 @@ from typing import List, Optional
 import httpx
 from packaging.version import Version
 
-from .models import Dependency, Ecosystem, ScanResult, Vulnerability
 from .cache import Cache
+from .models import Dependency, Ecosystem, ScanResult, Vulnerability
 
 
 class RegistryClient:

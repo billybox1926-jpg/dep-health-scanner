@@ -3,10 +3,10 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import List
 
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
 from rich import box
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 
 from .models import ScanResult
 
@@ -102,7 +102,10 @@ class Reporter:
         for r in results:
             icon = "✖" if "CRITICAL" in style or "HIGH" in style else "⚠"
             self.console.print(
-                f"  {icon} [cyan]{r.dependency.name}[/cyan]@[dim]{r.dependency.version}[/dim] [{r.dependency.ecosystem.value}]"
+                (
+                    f"  {icon} [cyan]{r.dependency.name}[/cyan]@"
+                    f"[dim]{r.dependency.version}[/dim] [{r.dependency.ecosystem.value}]"
+                )
             )
             if r.latest_version:
                 self.console.print(f"       [dim]latest:[/dim] [green]{r.latest_version}[/green]")
@@ -118,7 +121,10 @@ class Reporter:
                 )
                 color = "red" if sev in ("CRITICAL", "HIGH") else "yellow"
                 self.console.print(
-                    f"       [red bold]vulnerability:[/red bold] [cyan]{v.id}[/cyan] [{color}]{sev}[/color]: {v.summary}"
+                    (
+                        f"       [red bold]vulnerability:[/red bold] [cyan]{v.id}[/cyan] "
+                        f"[{color}]{sev}[/color]: {v.summary}"
+                    )
                 )
                 if v.fixed_versions:
                     self.console.print(
