@@ -1,4 +1,18 @@
+<div align="center">
+
+[![CI](https://github.com/billybox1926-jpg/dep-health-scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/billybox1926-jpg/dep-health-scanner/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+[![Rust](https://img.shields.io/badge/rust-1.80%2B-orange.svg)](https://www.rust-lang.org/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/dep-health-scanner)](https://pypi.org/project/dep-health-scanner/)
+
+**Tags:** `cli` · `dependency-management` · `supply-chain` · `security` · `vulnerability-scanner` · `lockfile` · `python` · `rust` · `osv` · `npm` · `cargo` · `go`
+
+</div>
+
 # dep-health-scanner
+
+![Icon](icon.svg)
 
 Fast, opinionated CLI for dependency health and supply chain scanning.
 Scans lockfiles for outdated/vulnerable dependencies, licenses, and maintainer health.
