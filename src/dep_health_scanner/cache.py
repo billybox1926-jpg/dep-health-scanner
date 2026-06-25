@@ -50,9 +50,7 @@ class Cache:
         cache_dir = Path.home() / ".cache" / "dep-health-scanner"
         return cls(cache_dir / "cache.sqlite")
 
-    def get_latest_version(
-        self, ecosystem: str, package: str
-    ) -> Optional[Tuple[str, datetime]]:
+    def get_latest_version(self, ecosystem: str, package: str) -> Optional[Tuple[str, datetime]]:
         with self._connect() as conn:
             cur = conn.execute(
                 "SELECT latest_version, last_updated FROM registry_versions WHERE package=? AND ecosystem=?",
@@ -60,9 +58,7 @@ class Cache:
             )
             row = cur.fetchone()
             if row:
-                return row["latest_version"], datetime.fromisoformat(
-                    row["last_updated"]
-                )
+                return row["latest_version"], datetime.fromisoformat(row["last_updated"])
             return None
 
     def set_latest_version(self, ecosystem: str, package: str, version: str):
@@ -110,12 +106,8 @@ class Cache:
 
     def stats(self) -> Tuple[int, int]:
         with self._connect() as conn:
-            reg = conn.execute(
-                "SELECT COUNT(*) as n FROM registry_versions"
-            ).fetchone()["n"]
-            vuln = conn.execute("SELECT COUNT(*) as n FROM vulnerabilities").fetchone()[
-                "n"
-            ]
+            reg = conn.execute("SELECT COUNT(*) as n FROM registry_versions").fetchone()["n"]
+            vuln = conn.execute("SELECT COUNT(*) as n FROM vulnerabilities").fetchone()["n"]
             return reg, vuln
 
 

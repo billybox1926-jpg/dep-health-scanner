@@ -105,9 +105,7 @@ class Reporter:
                 f"  {icon} [cyan]{r.dependency.name}[/cyan]@[dim]{r.dependency.version}[/dim] [{r.dependency.ecosystem.value}]"
             )
             if r.latest_version:
-                self.console.print(
-                    f"       [dim]latest:[/dim] [green]{r.latest_version}[/green]"
-                )
+                self.console.print(f"       [dim]latest:[/dim] [green]{r.latest_version}[/green]")
             for v in r.vulnerabilities:
                 sev = (
                     "CRITICAL"

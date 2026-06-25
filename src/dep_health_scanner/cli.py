@@ -21,12 +21,8 @@ app = typer.Typer(
 
 @app.command()
 def scan(
-    path: Optional[Path] = typer.Argument(
-        None, exists=True, file_okay=False, dir_okay=True
-    ),
-    fail_on_critical: bool = typer.Option(
-        False, "--exit-code", help="Fail on critical issues"
-    ),
+    path: Optional[Path] = typer.Argument(None, exists=True, file_okay=False, dir_okay=True),
+    fail_on_critical: bool = typer.Option(False, "--exit-code", help="Fail on critical issues"),
     min_severity: str = typer.Option("low", "--min-severity", help="Minimum severity"),
     format: str = typer.Option("text", "--format", help="Output format (text, json)"),
     quiet: bool = typer.Option(False, "--quiet", "-q"),

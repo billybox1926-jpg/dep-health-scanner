@@ -97,9 +97,7 @@ class LockfileDetector:
                 data = tomllib.load(f)
             packages = data.get("package", [])
             deps = [
-                Dependency(
-                    name=p["name"], version=p["version"], ecosystem=Ecosystem.PIP
-                )
+                Dependency(name=p["name"], version=p["version"], ecosystem=Ecosystem.PIP)
                 for p in packages
             ]
             return deps
