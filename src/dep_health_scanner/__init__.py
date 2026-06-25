@@ -1,8 +1,8 @@
-from .models import Dependency, Ecosystem, ScanResult, Vulnerability
 from .cache import Cache
 from .lockfile import LockfileDetector
-from .scanner import Scanner, RegistryClient, VulnerabilityClient
+from .models import Dependency, Ecosystem, ScanResult, Vulnerability
 from .reporter import Reporter
+from .scanner import RegistryClient, Scanner, VulnerabilityClient
 
 __version__ = "0.1.0"
 

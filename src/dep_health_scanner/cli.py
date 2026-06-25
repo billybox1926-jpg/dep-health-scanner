@@ -8,7 +8,7 @@ from rich import print as rprint
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from .cache import Cache
-from .lockfile import LockfileDetector, Ecosystem
+from .lockfile import Ecosystem, LockfileDetector
 from .reporter import Reporter
 from .scanner import Scanner
 
@@ -21,12 +21,8 @@ app = typer.Typer(
 
 @app.command()
 def scan(
-    path: Optional[Path] = typer.Argument(
-        None, exists=True, file_okay=False, dir_okay=True
-    ),
-    fail_on_critical: bool = typer.Option(
-        False, "--exit-code", help="Fail on critical issues"
-    ),
+    path: Optional[Path] = typer.Argument(None, exists=True, file_okay=False, dir_okay=True),
+    fail_on_critical: bool = typer.Option(False, "--exit-code", help="Fail on critical issues"),
     min_severity: str = typer.Option("low", "--min-severity", help="Minimum severity"),
     quiet: bool = typer.Option(False, "--quiet", "-q"),
 ):
@@ -103,7 +99,10 @@ def update(
             summary = scanner.update(deps, progress_callback=_progress)
 
         rprint(
-            f"[green]Updated {summary['updated']} packages and recorded {summary['vulns_found']} vulnerabilities.[/green]"
+            (
+                f"[green]Updated {summary['updated']} packages "
+                f"and recorded {summary['vulns_found']} vulnerabilities.[/green]"
+            )
         )
     finally:
         scanner.close()

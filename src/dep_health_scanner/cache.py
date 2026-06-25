@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import sqlite3
 import json
+import sqlite3
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -50,25 +50,25 @@ class Cache:
         cache_dir = Path.home() / ".cache" / "dep-health-scanner"
         return cls(cache_dir / "cache.sqlite")
 
-    def get_latest_version(
-        self, ecosystem: str, package: str
-    ) -> Optional[Tuple[str, datetime]]:
+    def get_latest_version(self, ecosystem: str, package: str) -> Optional[Tuple[str, datetime]]:
         with self._connect() as conn:
             cur = conn.execute(
-                "SELECT latest_version, last_updated FROM registry_versions WHERE package=? AND ecosystem=?",
+                "SELECT latest_version, last_updated FROM registry_versions "
+                "WHERE package=? AND ecosystem=?",
                 (package, ecosystem),
             )
             row = cur.fetchone()
             if row:
-                return row["latest_version"], datetime.fromisoformat(
-                    row["last_updated"]
-                )
+                return row["latest_version"], datetime.fromisoformat(row["last_updated"])
             return None
 
     def set_latest_version(self, ecosystem: str, package: str, version: str):
         with self._connect() as conn:
             conn.execute(
-                "INSERT OR REPLACE INTO registry_versions (package, ecosystem, latest_version, last_updated) VALUES (?, ?, ?, ?)",
+                (
+                    "INSERT OR REPLACE INTO registry_versions "
+                    "(package, ecosystem, latest_version, last_updated) VALUES (?, ?, ?, ?)"
+                ),
                 (package, ecosystem, version, datetime.utcnow().isoformat()),
             )
             conn.commit()
@@ -110,12 +110,8 @@ class Cache:
 
     def stats(self) -> Tuple[int, int]:
         with self._connect() as conn:
-            reg = conn.execute(
-                "SELECT COUNT(*) as n FROM registry_versions"
-            ).fetchone()["n"]
-            vuln = conn.execute("SELECT COUNT(*) as n FROM vulnerabilities").fetchone()[
-                "n"
-            ]
+            reg = conn.execute("SELECT COUNT(*) as n FROM registry_versions").fetchone()["n"]
+            vuln = conn.execute("SELECT COUNT(*) as n FROM vulnerabilities").fetchone()["n"]
             return reg, vuln
 
 
