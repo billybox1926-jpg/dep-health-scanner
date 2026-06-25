@@ -8,8 +8,6 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/dep-health-scanner)](https://pypi.org/project/dep-health-scanner/)
 
-**Tags:** `cli` · `dependency-management` · `supply-chain` · `security` · `vulnerability-scanner` · `lockfile` · `python` · `rust` · `osv` · `npm` · `cargo` · `go`
-
 </div>
 
 ![Icon](icon.svg)
