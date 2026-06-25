@@ -28,7 +28,6 @@ def scan(
         False, "--exit-code", help="Fail on critical issues"
     ),
     min_severity: str = typer.Option("low", "--min-severity", help="Minimum severity"),
-    format: str = typer.Option("text", "--format", help="Output format (text, json)"),
     quiet: bool = typer.Option(False, "--quiet", "-q"),
 ):
     scan_path = path or Path.cwd()
