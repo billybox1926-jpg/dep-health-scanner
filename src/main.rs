@@ -1,9 +1,7 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use colored::Colorize;
-use dep_health_scanner::{
-    cache::Cache, scanner::Scanner,
-};
+use dep_health_scanner::{cache::Cache, scanner::Scanner};
 use std::path::PathBuf;
 
 #[derive(Parser)]
