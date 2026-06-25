@@ -1,9 +1,9 @@
-use super::dependency::{Dependency, Ecosystem, Lockfile};
-use super::Error;
+use crate::dependency::{Dependency, Ecosystem, Lockfile};
+use crate::error::{Error, Result};
 use glob::glob;
 use serde::Deserialize;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 pub struct LockfileDetector;
 
@@ -28,11 +28,13 @@ impl LockfileDetector {
         }
 
         // Recursive search for lockfiles (limited depth)
-        for entry in glob(root.join("**/package-lock.json").to_str().unwrap()).unwrap() {
-            if let Ok(path) = entry {
-                let lockfile = Self::parse(&path, Ecosystem::Npm)?;
-                return Ok(Some(lockfile));
-            }
+        if let Some(path) = glob(root.join("**/package-lock.json").to_str().unwrap())
+            .unwrap()
+            .flatten()
+            .next()
+        {
+            let lockfile = Self::parse(&path, Ecosystem::Npm)?;
+            return Ok(Some(lockfile));
         }
 
         Ok(None)
@@ -47,11 +49,12 @@ impl LockfileDetector {
         ];
 
         for (filename, eco) in patterns {
-            for entry in glob(root.join(format!("**/{}", filename)).to_str().unwrap()).unwrap() {
-                if let Ok(path) = entry {
-                    if let Ok(lf) = Self::parse(&path, eco) {
-                        lockfiles.push(lf);
-                    }
+            for path in glob(root.join(format!("**/{}", filename)).to_str().unwrap())
+                .unwrap()
+                .flatten()
+            {
+                if let Ok(lf) = Self::parse(&path, eco) {
+                    lockfiles.push(lf);
                 }
             }
         }
@@ -92,7 +95,7 @@ impl LockfileDetector {
         if let Some(packages) = lock.packages {
             if let Some(obj) = packages.as_object() {
                 for (key, value) in obj {
-                    if key == "" {
+                    if key.is_empty() {
                         continue;
                     }
                     if let Some(version) = value.get("version").and_then(|v| v.as_str()) {
@@ -109,8 +112,10 @@ impl LockfileDetector {
                     }
                 }
             }
-        } else if let Some(deps) = lock.dependencies {
-            Self::extract_npm_deps(&deps, &mut deps, false);
+        } else if let Some(deps_value) = lock.dependencies {
+            let mut dep_list = Vec::new();
+            Self::extract_npm_deps(&deps_value, &mut dep_list, false);
+            deps.extend(dep_list);
         }
 
         Ok(deps)
@@ -178,22 +183,24 @@ impl LockfileDetector {
         let lock: PipfileLock = serde_json::from_str(content)?;
         let mut deps = Vec::new();
 
-        let add_section = |section: Option<&std::collections::HashMap<String, serde_json::Value>>, deps: &mut Vec<Dependency>| {
-            if let Some(map) = section {
-                for (name, info) in map {
-                    if let Some(version) = info.get("version").and_then(|v| v.as_str()) {
-                        deps.push(Dependency {
-                            name: name.clone(),
-                            version: version.to_string(),
-                            ecosystem: Ecosystem::Pip,
-                            source: None,
-                            transitive: false,
-                            dependencies: Vec::new(),
-                        });
+        let add_section =
+            |section: Option<&std::collections::HashMap<String, serde_json::Value>>,
+             deps: &mut Vec<Dependency>| {
+                if let Some(map) = section {
+                    for (name, info) in map {
+                        if let Some(version) = info.get("version").and_then(|v| v.as_str()) {
+                            deps.push(Dependency {
+                                name: name.clone(),
+                                version: version.to_string(),
+                                ecosystem: Ecosystem::Pip,
+                                source: None,
+                                transitive: false,
+                                dependencies: Vec::new(),
+                            });
+                        }
                     }
                 }
-            }
-        };
+            };
 
         add_section(lock.default.as_ref(), &mut deps);
         add_section(lock.develop.as_ref(), &mut deps);

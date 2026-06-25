@@ -20,8 +20,8 @@ depscan = "dep_health_scanner.cli:app"
 
 [project.optional-dependencies]
 dev = [
-  "ruff>=0.6",
-  "pytest>=8.0",
+    "ruff>=0.6",
+    "pytest>=8.0",
 ]
 
 [tool.ruff]

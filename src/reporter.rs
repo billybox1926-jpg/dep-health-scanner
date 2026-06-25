@@ -1,9 +1,10 @@
-use super::dependency::{ScanResult, Vulnerability};
+use super::dependency::ScanResult;
 use colored::Colorize;
 use std::collections::HashMap;
 
 pub struct Reporter {
     fail_on_critical: bool,
+    #[allow(dead_code)]
     min_severity: String,
 }
 
@@ -15,7 +16,7 @@ impl Reporter {
         }
     }
 
-    pub fn print_report(&self, results: &[ScanResult]) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn print_report(&self, results: &[ScanResult]) -> crate::Result<()> {
         if results.is_empty() {
             println!("{}", "No dependencies scanned.".yellow());
             return Ok(());
@@ -33,9 +34,18 @@ impl Reporter {
         let mut critical_found = false;
 
         // Summary header
-        println!("\n{}", "═══════════════════════════════════════".cyan().bold());
-        println!("{}", "       DEPENDENCY HEALTH REPORT        ".cyan().bold());
-        println!("{}", "═══════════════════════════════════════".cyan().bold());
+        println!(
+            "\n{}",
+            "═══════════════════════════════════════".cyan().bold()
+        );
+        println!(
+            "{}",
+            "       DEPENDENCY HEALTH REPORT        ".cyan().bold()
+        );
+        println!(
+            "{}",
+            "═══════════════════════════════════════".cyan().bold()
+        );
         println!();
 
         // Group results by severity
@@ -238,7 +248,9 @@ impl Reporter {
             }
             println!(
                 "         {}",
-                "run `depscan suggest <package>` for details".italic().dimmed()
+                "run `depscan suggest <package>` for details"
+                    .italic()
+                    .dimmed()
             );
         }
 
