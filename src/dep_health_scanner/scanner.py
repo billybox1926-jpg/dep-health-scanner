@@ -146,7 +146,7 @@ class Scanner:
         return results
 
     def _scan_one(self, dep: Dependency) -> ScanResult:
-        latest = self.registry.get_latest(dep)
+        latest, vulns = self._update_one(dep)
         outdated = False
         if latest and latest != dep.version:
             try:
@@ -155,14 +155,35 @@ class Scanner:
             except Exception:
                 pass
 
-        vulns = self.vuln_client.check(dep)
-
         return ScanResult(
             dependency=dep,
             latest_version=latest,
             outdated=outdated,
             vulnerabilities=vulns,
         )
+
+    def _update_one(self, dep: Dependency) -> tuple[Optional[str], List[Vulnerability]]:
+        latest = self.registry.get_latest(dep)
+        vulns = self.vuln_client.check(dep)
+        return latest, vulns
+
+    def update(
+        self,
+        deps: List[Dependency],
+        progress_callback=None,
+    ) -> dict:
+        updated = 0
+        vulns_found = 0
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            futures = {executor.submit(self._update_one, dep): dep for dep in deps}
+            for future in as_completed(futures):
+                latest, vulns = future.result()
+                if progress_callback:
+                    progress_callback()
+                if latest or vulns:
+                    updated += 1
+                vulns_found += len(vulns)
+        return {"updated": updated, "vulns_found": vulns_found}
 
     def close(self):
         self.registry.close()
