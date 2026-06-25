@@ -1,10 +1,10 @@
-use super::{
-    cache::Cache,
-    dependency::{Dependency, Ecosystem, ScanResult, Vulnerability},
-    lockfile::LockfileDetector,
-    reporter::Reporter,
-};
-use anyhow::{Context, Result};
+use crate::cache::Cache;
+use crate::dependency::{Dependency, ScanResult};
+use crate::error::Result;
+use crate::lockfile::LockfileDetector;
+use crate::reporter::Reporter;
+use anyhow::Context;
+use colored::Colorize;
 use rayon::prelude::*;
 use std::path::PathBuf;
 
@@ -104,11 +104,22 @@ impl Scanner {
         };
 
         // Check vulnerabilities
-        let vulnerabilities = self
+        let vuln_records = self
             .cache
             .get_vulnerabilities(&ecosystem_str, &dep.name)
             .ok()
             .unwrap_or_default();
+
+        let vulnerabilities: Vec<crate::dependency::Vulnerability> = vuln_records
+            .into_iter()
+            .map(|v| crate::dependency::Vulnerability {
+                id: v.id,
+                summary: v.summary,
+                severity: v.severity,
+                cve: v.cve,
+                fixed_versions: v.fixed_versions,
+            })
+            .collect();
 
         // Placeholder for bus factor
         let bus_factor_score = if self.bus_factor {

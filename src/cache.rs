@@ -1,11 +1,14 @@
-use super::Error;
+use crate::error::Result;
+use crate::Error;
 use chrono::{DateTime, Utc};
+use colored::Colorize;
 use rusqlite::{params, Connection};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
 pub struct Cache {
     conn: Arc<Mutex<Connection>>,
+    #[allow(dead_code)]
     cache_dir: PathBuf,
 }
 
@@ -73,7 +76,9 @@ impl Cache {
 
         match result {
             Ok((version, ts)) => {
-                let dt = DateTime::parse_from_rfc3339(&ts)?.with_timezone(&Utc);
+                let dt = DateTime::parse_from_rfc3339(&ts)
+                    .map_err(|e| Error::ParseError(e.to_string()))?
+                    .with_timezone(&Utc);
                 Ok(Some((version, dt)))
             }
             Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
@@ -102,11 +107,13 @@ impl Cache {
         let rows = stmt.query_map(params![ecosystem, package], |row| {
             Ok(VulnerabilityRecord {
                 id: row.get(0)?,
-                affected: row.get(1)?,
-                summary: row.get(2)?,
-                severity: row.get(3)?,
-                cve: row.get(4)?,
-                fixed_versions: serde_json::from_str(&row.get::<_, String>(5)?).unwrap_or_default(),
+                ecosystem: row.get(1)?,
+                package: row.get(2)?,
+                affected: row.get(3)?,
+                summary: row.get(4)?,
+                severity: row.get(5)?,
+                cve: row.get(6)?,
+                fixed_versions: serde_json::from_str(&row.get::<_, String>(7)?).unwrap_or_default(),
             })
         })?;
 
@@ -135,7 +142,7 @@ impl Cache {
         Ok(())
     }
 
-    pub fn update_all(&self) -> Result<()> {
+    pub async fn update_all(&self) -> Result<()> {
         // Placeholder: in a real implementation, fetch OSV feeds and registry mirrors
         println!(
             "{}",

@@ -1,9 +1,8 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::{Parser, Subcommand};
 use colored::Colorize;
 use dep_health_scanner::{
-    cache::Cache, dependency::Ecosystem, lockfile::LockfileDetector, reporter::Reporter,
-    scanner::Scanner,
+    cache::Cache, scanner::Scanner,
 };
 use std::path::PathBuf;
 
@@ -74,7 +73,9 @@ async fn main() -> Result<()> {
             fail_on_critical,
             min_severity,
         } => {
-            let scan_path = cli.path.unwrap_or_else(|| std::env::current_dir()?);
+            let scan_path = cli.path.unwrap_or_else(|| {
+                std::env::current_dir().expect("Failed to determine current directory")
+            });
             let mut scanner = Scanner::new(cache, scan_path);
             scanner
                 .configure(bus_factor, suggest, fail_on_critical, min_severity)

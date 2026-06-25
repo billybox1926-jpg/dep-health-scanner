@@ -1,9 +1,10 @@
-use super::dependency::{ScanResult, Vulnerability};
+use super::dependency::ScanResult;
 use colored::Colorize;
 use std::collections::HashMap;
 
 pub struct Reporter {
     fail_on_critical: bool,
+    #[allow(dead_code)]
     min_severity: String,
 }
 
@@ -15,7 +16,7 @@ impl Reporter {
         }
     }
 
-    pub fn print_report(&self, results: &[ScanResult]) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn print_report(&self, results: &[ScanResult]) -> crate::Result<()> {
         if results.is_empty() {
             println!("{}", "No dependencies scanned.".yellow());
             return Ok(());
